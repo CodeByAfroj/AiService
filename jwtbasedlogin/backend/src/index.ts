@@ -11,10 +11,22 @@ import jwt from "jsonwebtoken";
 const app = express();
 app.use(express.json());
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://aibasedpersonaldashboard.onrender.com"
+];
+
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: function(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true); // allow request
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
 }));
+
 
 // Signup route
 app.post("/api/v1/signup", async (req, res) => {
